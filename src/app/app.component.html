@@ -1,0 +1,12 @@
+<video id="my-video" width="400px" autoplay muted playsinline></video>
+<video id="their-video" width="400px" autoplay muted playsinline></video>
+<br>
+<p>My Video ID: </p>
+<p id="my-id"></p>
+<br>
+<input type="text" style="width: 225px;" id="their-id" (change)="onChangeEvent($event)"
+ placeholder="Please enter 16 digit partner's Peer ID">
+ <br>
+<button id="start-vid">Start</button>
+<button id="share-scr">Share Screen</button>
+<button id="stop-vid">Stop</button>
