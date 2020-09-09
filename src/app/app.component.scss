@@ -1,0 +1,52 @@
+.video-view {
+    position: relative;
+  //   width: 800px;
+    max-width: 800px;
+  }
+  
+  #my-video {
+      position: absolute;
+      height: 20%;
+      width: 20%;
+      bottom: 7px;
+      right: 15px;
+      border-radius: 10px;
+      z-index: 1;
+      // background-color: gray;
+  }
+  
+  #their-video {
+      width: 100%;
+      height: 100%;
+      background-color: gray;
+  }
+  
+  
+  .end-call-btn {
+      color: white;
+      border-radius: 50%;
+      font-size: 25px;
+      height: 40px;
+      width: 40px;
+  }
+  
+  
+  .end-call-btn {
+      color: white;
+      border-radius: 50%;
+      font-size: 25px;
+      height: 40px;
+      width: 40px;
+  }
+  
+  
+  
+  .end-call-btn:hover,
+  
+  .end-call-btn:focus {
+      color: red;
+      text-decoration: none;
+      cursor: pointer;
+      background-color: gray;
+  }
+  
