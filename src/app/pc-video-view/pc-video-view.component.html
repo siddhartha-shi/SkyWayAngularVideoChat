@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+  <title>SkyWay Tutorial</title>
+</head>
+<body>
+
+<div class="container">
+    <!--<div class="header">-->
+    <!--    <p class="header_heading">Mal-portal (Demo)</p>-->
+    <!--</div>-->
+
+    <div class='body-container'>
+
+        <div class="Row">
+            <div class="Column">
+            <div class="block_logo">
+                <a class="logo">
+          <img src="/assets/img/mal_rgb.png" alt="Mal-portal (Demo)" width="180" height="75">
+        </a>
+            </div>
+            </div>
+             <!--*ngIf="isMobileFlag"-->
+            <div class="Column">
+                <video id="my-video" class="my-video" autoplay muted playsinline></video>
+            <!--</div>-->
+            <!--<div *ngIf="!isMobileFlag" class="Column">-->
+            <!--    <video id="my-video-pc" class="my-video-pc" autoplay muted playsinline></video>-->
+            </div>
+        </div>
+
+        <div  class="their-video-flex">
+            <div  class="extra-space">
+        </div>
+
+        <!--<div  >-->
+          <video id="their-video" class="their-video" autoplay muted playsinline></video>
+        <!--</div>-->
+
+        <div  class="extra-space">
+            <button id="muted" class="muteBtn" (click)="muted($event)"><img id="muted-img" src="/assets/img/{{muteBtnName}}"/></button>
+            <!-- <div id="muted"></div> -->
+        </div>
+        </div>
+
+        <!--<div *ngIf="!isMobileFlag">-->
+        <!--    <video id="their-video-pc" class="their-video-pc" autoplay muted playsinline></video>-->
+        <!--</div>-->
+
+        <p id="my-id"></p>
+        <input type="text" id="their-id" class='inputTextBox' (change)="onChangeEvent($event)" placeholder="partner's PeerID">
+        <div class='BottomRow'>
+        <button id="start-vid"  class='startCallBtn'>Call</button>
+        <button id="share-scr" class='shareScrBtn'>Share Screen</button>
+        <button id="stop-vid"  class='stopCallBtn'>End</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

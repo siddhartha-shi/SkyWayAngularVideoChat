@@ -1,0 +1,140 @@
+.header {
+    background: #fff;
+    border-bottom: 1px solid #b8b2aa;
+    margin-bottom: -10px;
+    &_heading {
+      text-align: center;
+      font-size: 1.0rem;
+      font-weight: normal;
+      padding-top: 5px;
+      padding-bottom: 10px;
+      line-height: 1;
+      margin: 0;
+    }
+  }
+  
+  .container {
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+  
+  .body-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 50px 0 25px;
+  }
+  
+  .Row {
+    display: table;
+    width: 100%; /*Optional*/
+    table-layout: fixed; /*Optional*/
+    border-spacing: 19px; /*Optional*/
+    margin-top: -10px;
+  }
+  
+  .Column {
+    display: table-cell;
+  }
+  
+  .block_logo {
+    position: absolute;
+    margin-left: -19px;
+  }
+  
+  .logo {
+    // border: 1px solid red;
+    // border-radius: 5px;
+  }
+  
+  .my-video {
+    width: 160px;
+    height: 120px;
+    float: right;
+    margin-right: -19px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    object-fit: fill;
+  }
+  
+  .their-video-flex {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-height: 650px;
+    margin-top: -5px;
+  }
+  
+  .their-video {
+    position: relative;
+    width: 220%;
+    height: auto;
+    max-height: 680px;
+    margin-top: -5px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    object-fit: fill;
+  }
+  
+  .extra-space {
+    position: relative;
+    width: 50%;
+    height: auto;
+    max-height: 680px;
+    margin-top: -5px;
+  }
+  
+  .BottomRow {
+    display: table;
+    width: 100%; /*Optional*/
+    table-layout: fixed; /*Optional*/
+    margin-top: 5px;
+  }
+  
+  .inputTextBox {
+    width: 233px;
+    height: 35px;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+  
+  .startCallBtn {
+    color: black;
+    width: 100px;
+    height: 45px;
+    margin-right: 15px;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+  
+  .shareScrBtn {
+    color: black;
+    width: 145px;
+    height: 45px;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+  
+  .stopCallBtn {
+    color: black;
+    width: 100px;
+    height: 45px;
+    // float: right;
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin-left: 15px;
+  }
+  
+  .muteBtn {
+    position: absolute;
+    bottom: 2px;
+    color: black;
+    width: 19px;
+    height: 19px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin-left: -21px;
+    padding-left: 0;
+  }
