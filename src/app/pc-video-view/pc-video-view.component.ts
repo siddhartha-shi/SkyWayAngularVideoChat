@@ -1,39 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import Peer from 'skyway-js';
 
 @Component({
   selector: 'app-pc-video-view',
   templateUrl: './pc-video-view.component.html',
-  styleUrls: ['./pc-video-view.component.scss']
+  styleUrls: ['./pc-video-view.component.scss'],
 })
 export class PcVideoViewComponent implements OnInit {
-
+  
   muteBtnImg: string[] = ['mic_black.png', 'mic_off_black.png'];
   muteBtnName: string = this.muteBtnImg[0];
   
+  /*angular element*/
+  myID: string = '';
+  theirID: string = '';
+  isTheirIDDisabled: boolean = false;
+  
+  isStartCallBtnDisable: boolean = false;
+  isShareBtnDisable: boolean = false;
+  isEndBtnHidden: boolean = false;
+  isMuteBtnHidden: boolean = false;
+  
   /* Html Element */
-  myIDElm: any;
   myVideoElm: any;
-  theirIDElm: any;
-  startBtnElm: any;
-  shareBtnElm: any;
-  stopBtnElm: any;
-  mutedBtnElm: any;
-  mutedImgElm: any;
-
-  /* device identification flag */
-  isMobileFlag: boolean = false;
 
   /* navigation service permission */
   tempTrack: any = [];
 
   /* Peer作成 */
-  peer: any = null;
+  peer: any = new Peer(String(Math.floor((Math.random() * 100) + 1)), {
+      key: '40382ddc-a5db-4848-82ec-9da09135b90a',
+      debug: 3,
+    });
+
+  mediaConnection: any;
 
    /* local media stream */
   localStream: any = null;
 
-  constructor() {}
+  constructor(
+    private cd: ChangeDetectorRef,
+    ) {}
 
   ngOnInit(): void {
     this.initPeer();
@@ -45,73 +52,45 @@ export class PcVideoViewComponent implements OnInit {
    /* call on input change of partner's PeerID */
   onChangeEvent(event: any) {
     if (
-      this.myIDElm.textContent.slice(9) === this.theirIDElm.value ||
-      this.theirIDElm.value.length !== 16
+      this.myID === this.theirID ||
+      this.theirID.length >= 4 || this.theirID === '' || this.theirID === ' '
     ) {
-      this.startBtnElm.disabled = true;
-      this.startBtnElm.style.backgroundColor = 'gray';
-      this.shareBtnElm.disabled = true;
-      this.shareBtnElm.style.backgroundColor = 'gray';
-      this.stopBtnElm.disabled = true;
-      this.stopBtnElm.style.backgroundColor = 'gray';
-      this.stopBtnElm.style.visibility = 'hidden';
-      this.mutedBtnElm.style.visibility = 'hidden';
+      this.isStartCallBtnDisable = true;
+      this.isShareBtnDisable = true;
+      this.isEndBtnHidden = true;
+      this.isMuteBtnHidden = true;
     } else {
-      this.startBtnElm.disabled = false;
-      this.startBtnElm.style.backgroundColor = 'green';
-      this.shareBtnElm.disabled = false;
-      this.shareBtnElm.style.backgroundColor = 'springgreen';
-      this.stopBtnElm.disabled = true;
-      this.stopBtnElm.style.backgroundColor = 'red';
-      this.stopBtnElm.style.visibility = 'visible';
+      this.isStartCallBtnDisable = false;
+      this.isShareBtnDisable = false;
+      this.isEndBtnHidden = false;
     }
-    this.theirIDElm.disabled = false;
+    this.isTheirIDDisabled = false;
+    this.cd.detectChanges();
   }
 
   /* initialize of skyway peers */
   initPeer() {
-    this.peer = new Peer({
-      key: '40382ddc-a5db-4848-82ec-9da09135b90a',
-      debug: 3,
-    });
-
+     
     //PeerID取得
     this.peer.on('open', () => {
-      this.myIDElm.textContent = 'Your ID: ' + this.peer.id;
+      this.myID = this.peer.id;
+      this.cd.detectChanges();
     });
 
     this.peer.on('error', (err) => {
       alert(err.message);
+      this.cd.detectChanges();
     });
 
     this.peer.on('error', (err) => {
       alert(err.message);
+      this.cd.detectChanges();
     });
   }
 
   /* initialize of DOM elements */
   initDomElement() {
-    this.isMobileFlag = false;
-    let ua = navigator.userAgent;
-    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(ua)) {
-      // alert('Mobile: ' + ua);
-      this.isMobileFlag = true;
-    } if(/Chrome/i.test(ua)) {
-      // alert('Chrome: ' + ua);
-    } if(/Mozilla/i.test(ua)) {
-      // alert('Mozilla: ' + ua);
-    }  else {
-      // alert('Others: ' + ua);
-    }
-    
-    this.myIDElm = document.getElementById('my-id');
     this.myVideoElm = document.getElementById('my-video');
-    this.theirIDElm = document.getElementById('their-id');
-    this.startBtnElm = document.getElementById('start-vid');
-    this.shareBtnElm = document.getElementById('share-scr');
-    this.stopBtnElm = document.getElementById('stop-vid');
-    this.mutedBtnElm = document.getElementById('muted');
-    this.mutedImgElm =  document.getElementById('muted-img');
   }
 
  /* handle meada stream and events */
@@ -130,15 +109,15 @@ export class PcVideoViewComponent implements OnInit {
         .then((stream) => {
           this.myVideoElm.srcObject = stream;
           this.myVideoElm.playsInline = true;
+          this.myVideoElm.muted = true;
           this.myVideoElm.play();
 
           // Save the camera image to a global variable so that it can be returned to the other party when a call comes in.
           this.localStream = stream;
 
-          this.stopBtnElm.disabled = false;
-          this.stopBtnElm.style.backgroundColor = 'red';
-          this.stopBtnElm.style.visibility = 'visible';
-          this.mutedBtnElm.style.visibility = 'visible';
+          
+          this.isMuteBtnHidden = false;
+          this.cd.detectChanges();
         })
         .catch((error) => {
           // Outputs error log in case of failure.
@@ -146,19 +125,21 @@ export class PcVideoViewComponent implements OnInit {
           return;
         })
         .finally(() => {
-          this.theirIDElm.value = '';
-          this.theirIDElm.disabled = true;
-          this.startBtnElm.disabled = true;
-          this.startBtnElm.style.backgroundColor = 'gray';
-          this.shareBtnElm.disabled = true;
-          this.shareBtnElm.style.backgroundColor = 'gray';
+          this.isEndBtnHidden = false;
+          
+          this.isTheirIDDisabled = true;
+          this.isStartCallBtnDisable = true;
+          this.isShareBtnDisable = true;
 
           mediaConnection.answer(this.localStream);
-          setEventListener(mediaConnection);
+          this.setEventListener(mediaConnection);
+          this.cd.detectChanges();
         });
     });
-
-    document.getElementById('start-vid').onclick = () => {
+  }
+  
+  onBtnClickMakeCall(event: any) {
+    
       if (this.localStream != null) {
         let tracks = this.myVideoElm.srcObject.getTracks();
         tracks.forEach((track) => this.tempTrack.push(track));
@@ -166,82 +147,132 @@ export class PcVideoViewComponent implements OnInit {
 
       // camera image acquisition
       navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
+        .getUserMedia({ video: true, audio: {
+      sampleSize: 16,
+      echoCancellation: true
+    } })
         .then((stream) => {
           this.myVideoElm.srcObject = stream;
+          this.myVideoElm.muted = true;
+          this.myVideoElm.playsInline = true;
           this.myVideoElm.play();
 
           // Save the camera image to a global variable so that it can be returned to the other party when a call comes in.
           this.localStream = stream;
 
-          this.startBtnElm.disabled = true;
-          this.startBtnElm.style.backgroundColor = 'gray';
-          this.shareBtnElm.disabled = false;
-          this.shareBtnElm.style.backgroundColor = 'springgreen';
-          this.stopBtnElm.disabled = false;
-          this.stopBtnElm.style.backgroundColor = 'red';
-          this.mutedBtnElm.style.visibility = 'visible';
+          this.isStartCallBtnDisable = true;
+          this.isShareBtnDisable = false;
+          this.isEndBtnHidden = false;
+          this.isMuteBtnHidden = false;
 
-          let theirID = this.theirIDElm.value;
-          let mediaConnection = this.peer.call(theirID, this.localStream);
-          setEventListener(mediaConnection);
+          let mediaConnection = this.peer.call(this.theirID, this.localStream);
+          this.setEventListener(mediaConnection);
         })
         .catch((error) => {
           // Outputs error log in case of failure.
           console.error('mediaDevice.getUserMedia() error:', error);
           return;
         });
-    };
-
-    document.getElementById('share-scr').onclick = async () => {
-      if (this.localStream != null) {
+  }
+  
+  async onBtnClickShareScr (event: any) {
+    if (this.localStream != null) {
         let tracks = this.myVideoElm.srcObject.getTracks();
         tracks.forEach((track) => this.tempTrack.push(track));
       }
 
       let displayMediaOptions = {
-        video: { cursor: 'always' },
-        audio: true,
+        video: true,
+        audio: {
+          sampleSize: 16,
+          echoCancellation: true
+        } ,
       };
 
       try {
         this.localStream = await (navigator.mediaDevices as any).getDisplayMedia(
           displayMediaOptions
         );
+        
+        
+        let audioStream = await navigator.mediaDevices
+        .getUserMedia({ video: false, audio: {
+      sampleSize: 16,
+      echoCancellation: true
+    } })
+    let audioTrack = audioStream.getAudioTracks()[0];
+    // add audio tracks into screen stream
+    this.localStream.addTrack( audioTrack );
+    
         this.myVideoElm.srcObject = this.localStream;
+        this.myVideoElm.muted = true;
         this.myVideoElm.playsInline = true;
+        this.myVideoElm.play();
 
-        this.startBtnElm.disabled = false;
-        this.startBtnElm.style.backgroundColor = 'green';
-        this.shareBtnElm.disabled = true;
-        this.shareBtnElm.style.backgroundColor = 'gray';
-        this.stopBtnElm.disabled = false;
-        this.stopBtnElm.style.backgroundColor = 'red';
-        this.mutedBtnElm.style.visibility = 'visible';
+        this.isStartCallBtnDisable = false;
+        this.isShareBtnDisable = true;
+        this.isEndBtnHidden = false;
+        this.isMuteBtnHidden = false;
 
-        let theirID = this.theirIDElm.value;
-        let mediaConnection = this.peer.call(theirID, this.localStream);
-        setEventListener(mediaConnection);
+        let mediaConnection = this.peer.call(this.theirID, this.localStream);
+        this.setEventListener(mediaConnection);
       } catch (err) {
         console.error('Error: ' + err);
       }
-    };
+  }
+  
+  onBtnClickEnd (event: any) {
+    this.peer.listAllPeers((peers) => {
+            console.log(peers);
+            // => ["yNtQkNyjAojJNGrt", "EzAmgFhCKBQMzKw9"]
+            });
+    
+    if (this.mediaConnection === undefined || !this.mediaConnection?.open) {
+          this.muteBtnName = this.muteBtnImg[0];
+          this.isMuteBtnHidden = true;
+          this.onChangeEvent(null);
+          let tracks = this.myVideoElm.srcObject?.getTracks();
+          tracks?.forEach((track) => this.tempTrack.push(track));
 
-    // Function to set an event listener
-    const setEventListener = (mediaConnection) => {
+          this.tempTrack?.forEach((track) => track.stop());
+
+          this.myVideoElm.srcObject = null;
+          this.localStream = null;
+        } else {
+          this.mediaConnection.close(true);
+        }
+  }
+  
+  muted (event: any) {
+    // let target = event.target || event.srcElement || event.currentTarget;
+    // let idAttr = target.attributes.id;
+    let audioTrack = this.localStream?.getAudioTracks()[0];
+    audioTrack.enabled = audioTrack?.enabled? false : true;
+    this.muteBtnName = audioTrack?.enabled? this.muteBtnImg[0] : this.muteBtnImg[1];
+    // videoElmT.requestFullscreen();
+    this.cd.detectChanges();
+  }
+  
+   // Function to set an event listener
+    setEventListener = (mediaConnection) => {
+      this.mediaConnection = mediaConnection;
       let videoElmT: any = document.getElementById('their-video');
 
       mediaConnection.on('stream', (stream) => {
         // Set a camera image to the video element and play it
         videoElmT.srcObject = stream;
         videoElmT.play();
+        
+        this.theirID = mediaConnection.remoteId;
+        this.cd.detectChanges();
       });
 
       mediaConnection.once('close', () => {
         this.onChangeEvent(null);
-        this.theirIDElm.disabled = false;
-        this.mutedImgElm.src = '/assets/img/' + this.muteBtnName;
-        this.mutedBtnElm.style.visibility = 'hidden';
+        this.isTheirIDDisabled = false;
+        
+        this.muteBtnName = this.muteBtnImg[0];
+        this.isMuteBtnHidden = true;
 
         videoElmT.srcObject?.getTracks().forEach((track) => track.stop());
         videoElmT.srcObject = null;
@@ -253,36 +284,7 @@ export class PcVideoViewComponent implements OnInit {
         this.tempTrack?.forEach((track) => track.stop());
 
         this.localStream = null;
+        this.cd.detectChanges();
       });
-
-      document.getElementById('stop-vid').onclick = () => {
-        if (!mediaConnection.open) {
-          this.mutedBtnElm.style.visibility = 'hidden';
-          this.onChangeEvent(null);
-          let tracks = this.myVideoElm.srcObject?.getTracks();
-          tracks?.forEach((track) => this.tempTrack.push(track));
-
-          this.tempTrack?.forEach((track) => track.stop());
-
-          this.myVideoElm.srcObject = null;
-          this.localStream = null;
-        } else {
-          mediaConnection.close(true);
-        }
-      };
     };
-  }
-  
-  muted (event: any) {
-    // let target = event.target || event.srcElement || event.currentTarget;
-    // let idAttr = target.attributes.id;
-    // let value = target.style.backgroundColor;
-    // target.style.backgroundColor  = 'green';
-    let audioTrack = this.localStream?.getAudioTracks()[0];
-    audioTrack.enabled = audioTrack?.enabled? false : true;
-    let muteImgURL: string = '/assets/img/';
-    muteImgURL += audioTrack?.enabled? this.muteBtnImg[0] : this.muteBtnImg[1];
-    this.mutedImgElm.src = muteImgURL;
-    // videoElmT.requestFullscreen();
-  }
 }

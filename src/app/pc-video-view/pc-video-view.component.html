@@ -23,39 +23,31 @@
         </a>
             </div>
             </div>
-             <!--*ngIf="isMobileFlag"-->
             <div class="Column">
                 <video id="my-video" class="my-video" autoplay muted playsinline></video>
-            <!--</div>-->
-            <!--<div *ngIf="!isMobileFlag" class="Column">-->
-            <!--    <video id="my-video-pc" class="my-video-pc" autoplay muted playsinline></video>-->
             </div>
         </div>
 
         <div  class="their-video-flex">
             <div  class="extra-space">
         </div>
-
-        <!--<div  >-->
-          <video id="their-video" class="their-video" autoplay muted playsinline></video>
-        <!--</div>-->
+          <video id="their-video" class="their-video" autoplay playsinline></video>
 
         <div  class="extra-space">
-            <button id="muted" class="muteBtn" (click)="muted($event)"><img id="muted-img" src="/assets/img/{{muteBtnName}}"/></button>
-            <!-- <div id="muted"></div> -->
+            <button id="muted" class="muteBtn" [style.visibility]="isMuteBtnHidden ? 'hidden': 'visible'" (click)="muted($event)"><img id="mute-img" src="/assets/img/{{muteBtnName}}"/></button>
+            <!--<div id="muted"></div>-->
         </div>
         </div>
 
-        <!--<div *ngIf="!isMobileFlag">-->
-        <!--    <video id="their-video-pc" class="their-video-pc" autoplay muted playsinline></video>-->
-        <!--</div>-->
-
-        <p id="my-id"></p>
-        <input type="text" id="their-id" class='inputTextBox' (change)="onChangeEvent($event)" placeholder="partner's PeerID">
+        <p id="my-id">Your ID: {{myID}} </p>
+        <input type="text" id="their-id" [(ngModel)]="theirID" [disabled]="isTheirIDDisabled" class='inputTextBox' (change)="onChangeEvent($event)" placeholder="Partner's PeerID">
         <div class='BottomRow'>
-        <button id="start-vid"  class='startCallBtn'>Call</button>
-        <button id="share-scr" class='shareScrBtn'>Share Screen</button>
-        <button id="stop-vid"  class='stopCallBtn'>End</button>
+        <button id="start-vid" class='startCallBtn' [disabled]="isStartCallBtnDisable"
+        [style.background-color]="isStartCallBtnDisable ? 'gray': 'green'"  (click)="onBtnClickMakeCall($event)">Call</button>
+        <button id="share-scr" class='shareScrBtn' [disabled]="isShareBtnDisable"
+        [style.background-color]="isShareBtnDisable ? 'gray': 'springgreen'" (click)="onBtnClickShareScr($event)">Share Screen</button>
+        <button id="stop-vid" class='stopCallBtn' [style.visibility]="isEndBtnHidden ? 'hidden': 'visible'" [disabled]="isEndBtnHidden"
+        [style.background-color]="isEndBtnHidden ? 'gray': 'red'" (click)="onBtnClickEnd($event)">End</button>
         </div>
     </div>
 </div>

@@ -45,7 +45,7 @@ export class MobileVideoViewComponent implements OnInit {
   onChangeEvent(event: any) {
     if (
       this.myIDElm.textContent.slice(9) === this.theirIDElm.value ||
-      this.theirIDElm.value.length !== 16
+      this.theirIDElm.value.length >= 4 || this.theirIDElm.value === '' || this.theirIDElm.value === ' '
     ) {
       this.startBtnElm.disabled = true;
       this.startBtnElm.style.backgroundColor = 'gray';
@@ -67,7 +67,7 @@ export class MobileVideoViewComponent implements OnInit {
 
   /* initialize of skyway peers */
   initPeer() {
-    this.peer = new Peer({
+    this.peer = new Peer(String(Math.floor((Math.random() * 100) + 1)), {
       key: '40382ddc-a5db-4848-82ec-9da09135b90a',
       debug: 3,
     });
@@ -122,11 +122,16 @@ export class MobileVideoViewComponent implements OnInit {
 
       // camera image acquisition
       navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
+        .getUserMedia({ video: true, audio: {
+          sampleSize: 16,
+          echoCancellation: true,
+          noiseSuppression: true
+        } })
 
         .then((stream) => {
           this.myVideoElm.srcObject = stream;
           this.myVideoElm.playsInline = true;
+          this.myVideoElm.muted = true;
           this.myVideoElm.play();
 
           // Save the camera image to a global variable so that it can be returned to the other party when a call comes in.
@@ -163,9 +168,13 @@ export class MobileVideoViewComponent implements OnInit {
 
       // camera image acquisition
       navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
+        .getUserMedia({ video: true, audio: {
+          sampleSize: 16,
+          echoCancellation: true
+        }  })
         .then((stream) => {
           this.myVideoElm.srcObject = stream;
+          this.myVideoElm.muted = true;
           this.myVideoElm.play();
 
           // Save the camera image to a global variable so that it can be returned to the other party when a call comes in.
@@ -196,8 +205,11 @@ export class MobileVideoViewComponent implements OnInit {
       }
 
       let displayMediaOptions = {
-        video: { cursor: 'always' },
-        audio: false,
+        video: true,
+        audio: {
+          sampleSize: 16,
+          echoCancellation: true
+        } ,
       };
 
       try {
@@ -205,7 +217,9 @@ export class MobileVideoViewComponent implements OnInit {
           displayMediaOptions
         );
         this.myVideoElm.srcObject = this.localStream;
+        this.myVideoElm.muted = true;
         this.myVideoElm.playsInline = true;
+        this.myVideoElm.play();
 
         this.startBtnElm.disabled = false;
         this.shareBtnElm.disabled = true;
